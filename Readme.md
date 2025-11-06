@@ -1,71 +1,135 @@
+# AzureML Pipeline for Used Car Price Prediction
 
-# Used Cars Price Prediction MLOps Pipeline
+This repository contains an end-to-end Machine Learning Operations (MLOps) pipeline designed to automate the preparation, training, and deployment of a machine learning model for predicting used car prices. The solution uses Microsoft Azure Machine Learning services, with full integration of CI/CD principles and model management through MLflow.
+
+## Table of Contents
+
+1. [Problem Statement](#problem-statement)
+2. [Objective](#objective)
+3. [Dataset Description](#dataset-description)
+4. [Solution Architecture](#solution-architecture)
+5. [Pipeline Components](#pipeline-components)
+6. [Technologies Used](#technologies-used)
+7. [Setup Instructions](#setup-instructions)
+8. [Execution](#execution)
+9. [Outputs](#outputs)
+10. [Notes](#notes)
+
+---
 
 ## Problem Statement
 
-The automobile market in Los Vegas is booming, with increasing demand for luxury and non-luxury vehicles. A prominent dealership is struggling with **inconsistent and inefficient pricing strategies** due to manual processes and disjointed systems. These challenges lead to:
+An automobile dealership in Los Vegas specializes in selling both luxury and non-luxury vehicles. However, due to manual and disjointed pricing methods, they face challenges such as:
 
-* Prone-to-error pricing evaluations
-* Delayed model updates
-* Difficulty scaling operations on rising demand
-* Revenue loss and reduced customer trust
+* Inconsistent and error-prone evaluations
+* Delayed updates across systems
+* Difficulty in scaling operations using manual workflows
 
-To address these inefficiencies, the dealership aims to implement a **scalable, automated, and data-driven pricing system** backed by MLOps practices.
-
----
-
-## Business Context
-
-The dealership sells vehicles with diverse characteristics, including:
-
-* Distance driven
-* Fuel efficiency
-* Engine specifications
-* Seating capacity
-* Vehicle segment (luxury vs non-luxury)
-
-The absence of automation leads to delayed market responsiveness and inconsistent pricing. The dealership seeks a **unified solution that ensures real-time, data-driven, and scalable pricing decisions**, aligning with dynamic market trends.
-
----
+These inefficiencies negatively affect model performance, pricing accuracy, and customer trust. The dealership seeks an automated, reliable, and scalable system for model-based pricing.
 
 ## Objective
 
-As an **MLOps Engineer**, your mission is to design and deploy a complete **MLOps pipeline** that automates and enhances the pricing workflow. This system will include:
+As an MLOps engineer, your task is to design and implement an automated MLOps pipeline using Azure Machine Learning that delivers:
 
-* **CI/CD** pipeline for continuous integration and delivery
-* Data cleaning & preprocessing
-* Data transformation
-* Model building & training
-* Model evaluation
-* Model registration
-* Automated model retraining and deployment
+* Data preprocessing and transformation
+* Model training and hyperparameter tuning
+* Model performance logging and registration
+* Model version management and deployment readiness
 
-The end goal is to create a **robust, efficient, and scalable machine learning pipeline** that empowers the business to adapt to market changes, scale operations, and improve customer satisfaction — all while driving profitability.
+The goal is to improve pricing accuracy, handle evolving conditions, and scale effortlessly with demand.
+
+## Dataset Description
+
+The dataset contains attributes of used cars such as:
+
+| Feature             | Description                            |
+| ------------------- | -------------------------------------- |
+| `Segment`           | Luxury or non-luxury classification    |
+| `Kilometers_Driven` | Total kilometers driven by the vehicle |
+| `Mileage`           | Fuel efficiency (km/l)                 |
+| `Engine`            | Engine capacity (cc)                   |
+| `Power`             | Engine power (BHP)                     |
+| `Seats`             | Number of seats                        |
+| `Price`             | Selling price (in lakhs)               |
+
+This dataset is crucial for training a model that predicts prices based on key specifications.
+
+## Solution Architecture
+
+The solution uses AzureML to orchestrate a pipeline with the following stages:
+
+1. **Data Preparation**
+2. **Model Training**
+3. **Hyperparameter Tuning**
+4. **Model Registration**
+
+All jobs are run on a reusable AzureML compute cluster, and the environment is containerized using a Conda-based configuration.
+
+## Pipeline Components
+
+### 1. Data Preparation (`data_prep`)
+
+* Encodes categorical features
+* Splits data into train and test sets
+* Logs dataset metrics through MLflow
+
+### 2. Model Training (`model_train`)
+
+* Trains a Random Forest Regressor
+* Evaluates performance via Mean Squared Error (MSE)
+* Logs metrics and saves model as an MLflow artifact
+
+### 3. Hyperparameter Tuning (`sweep_job`)
+
+* Performs randomized hyperparameter search
+* Minimizes MSE using multiple trials
+
+### 4. Model Registration (`model_register`)
+
+* Registers best-performing model to the MLflow registry
+* Version controls the model for production readiness
+
+## Technologies Used
+
+* **Azure Machine Learning**
+* **Python**
+* **MLflow**
+* **Scikit-learn**
+* **Pandas, NumPy**
+* **AzureML SDK v2**
+
+## Setup Instructions
+
+1. Clone the repository and navigate to the project directory.
+2. Install the required dependencies (see `train-conda.yml`).
+3. Create or use an existing AzureML workspace and compute cluster.
+4. Upload the dataset (`used_cars.csv`) as an Azure ML data asset.
+5. Configure the environment using the provided Conda configuration file.
+
+## Execution
+
+1. Submit the full pipeline using the AzureML SDK:
+
+```python
+pipeline_job = ml_client.jobs.create_or_update(pipeline_instance)
+ml_client.jobs.stream(pipeline_job.name)
+```
+
+2. Monitor the pipeline progress in AzureML Studio.
+
+3. Retrieve output artifacts, trained models, and logs upon completion.
+
+## Outputs
+
+* Preprocessed train and test datasets
+* Best-trained model registered in MLflow
+* Hyperparameter search logs
+* Performance metrics (MSE)
+
+## Notes
+
+* The entire flow is designed to be reproducible and scalable.
+* Use `ml_client.environments.create_or_update()` for environment versioning.
+* Registered models can later be deployed as REST endpoints or integrated into downstream apps.
 
 ---
-
-## Data Description
-
-The dataset includes key vehicle attributes used for predicting car prices:
-
-| Feature               | Description                                                                               |
-| --------------------- | ----------------------------------------------------------------------------------------- |
-| **Segment**           | Category of the vehicle (luxury or non-luxury)                                            |
-| **Kilometers_Driven** | Total distance the car has been driven                                                    |
-| **Mileage**           | Fuel efficiency (km/l)                                                                    |
-| **Engine**            | Engine capacity (cc)                                                                      |
-| **Power**             | Engine power (BHP)                                                                        |
-| **Seats**             | Number of passenger seats                                                                 |
-| **Price**             | Price of the car, listed in lakhs (1 lakh = 100,000 units), highest value to be predicted |
-
----
-
-## Expected Outcomes
-
-With this MLOps pipeline, the dealership will gain:
-
-* Improved pricing accuracy
-* Enhanced scalability through automation
-* Faster and reliable updates through CI/CD
-* Increased customer trust through consistent data-backed strategies
-* Higher operational profitability
