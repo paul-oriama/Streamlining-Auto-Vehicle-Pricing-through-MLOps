@@ -1,6 +1,6 @@
-# AzureML Pipeline for Used Car Price Prediction
+# AzureML Pipeline for luxury and non-luxury vehicles Price Prediction
 
-This repository contains an end-to-end Machine Learning Operations (MLOps) pipeline designed to automate the preparation, training, and deployment of a machine learning model for predicting used car prices. The solution uses Microsoft Azure Machine Learning services, with full integration of CI/CD principles and model management through MLflow.
+This repository contains an end-to-end Machine Learning Operations (MLOps) pipeline designed to automate the preparation, training, and deployment of a machine learning model for predicting luxury and non-luxury vehicles prices. The solution uses Microsoft Azure Machine Learning services, with full integration of CI/CD principles and model management through MLflow.
 
 ## Table of Contents
 
