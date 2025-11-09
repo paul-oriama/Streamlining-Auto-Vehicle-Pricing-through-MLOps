@@ -1,8 +1,8 @@
 $schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
 type: pipeline
 display_name: random_forest_training_pipeline  # Provide the display name for the pipeline
-experiment_name: used_cars_price_prediction_experiment  # Provide the experiment name
-description: Training Pipeline to predict used cars pricing using random forest classifier # Provide the description for the pipeline
+experiment_name: luxury_nonluxury_price_prediction
+description: Train Random Forest to predict luxury/non-luxury vehicle prices
 
 
 inputs:
